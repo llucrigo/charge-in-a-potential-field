@@ -1,0 +1,12 @@
+#XMIN
+-30
+#XMAX
+60
+#YMIN
+-30
+#YMAX
+30
+#ZOOM
+3
+#XOFFSET
+0
