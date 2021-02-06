@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Feb  4 20:57:48 2021
-
 @author: lluc
 """
 
@@ -30,6 +29,30 @@ def getFileData(filename):
 			else:
 				array.append(float(info.rstrip()))
 	return array
+
+
+class MobileCharge_class:
+	#Charge moving in the electric field
+
+	h=0.1 #Time step
+
+	def __init__(self, electricfield, q, m, r, v):
+		self.electricfield= electricfield
+		self.q=q
+		self.m=m
+		self.r=r
+		self.v=v
+
+	def move(self):
+		E=self.electricfield.vector([self.r[0],self.r[1]])
+		ac=self.q*E/self.m
+		self.r[0]=self.r[0]+self.v[0]*self.h+(ac[0]/2)*self.h**2
+		self.r[1]=self.r[1]+self.v[1]*self.h+(ac[1]/2)*self.h**2
+		self.v[0]=self.v[0]+ac[0]*self.h
+		self.v[1]=self.v[1]+ac[1]*self.h
+
+	def get_r(self):
+		return self.r
 
 
 config=getFileData("config.txt")
@@ -113,8 +136,9 @@ x_mc=MobileCharge[2]
 y_mc=MobileCharge[3]
 vx_mc=MobileCharge[4]
 vy_mc=MobileCharge[5]
-h=1e-1
+#h=1e-1
 
+mobilecharge = MobileCharge_class(field,q_mc,m_mc,[x_mc,y_mc],[vx_mc,vy_mc])
 
 ## Plotting ##
 
@@ -126,13 +150,16 @@ field.plot()
 
 n=0
 while n<500:
+	x_mc,y_mc=mobilecharge.get_r()
 	plt.scatter(x_mc,y_mc, 2, "#00ff00")
-	E=field.vector([x_mc,y_mc])
-	ac=q_mc*E/m_mc
-	x_mc=x_mc+vx_mc*h+(ac[0]/2)*h**2
-	vx_mc=vx_mc+ac[0]*h
-	y_mc=y_mc+vy_mc*h+(ac[1]/2)*h**2
-	vy_mc=vy_mc+ac[1]*h
+	mobilecharge.move()
+	#plt.scatter(x_mc,y_mc, 2, "#00ff00")
+	# E=field.vector([x_mc,y_mc])
+	# ac=q_mc*E/m_mc
+	# x_mc=x_mc+vx_mc*h+(ac[0]/2)*h**2
+	# vx_mc=vx_mc+ac[0]*h
+	# y_mc=y_mc+vy_mc*h+(ac[1]/2)*h**2
+	# vy_mc=vy_mc+ac[1]*h
 	n=n+1
 
 for charge in charges:
@@ -141,4 +168,3 @@ finalize_plot()
 
 
 plt.show()
-
