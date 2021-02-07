@@ -33,6 +33,7 @@ class MobileCharge_class:
 	#Charge moving in the electric field
 
 	h=0.1 #Time step
+	#eps=0.05
 	eps=0.1
 	nmax=50
 
@@ -69,8 +70,14 @@ class MobileCharge_class:
 	def get_r(self):
 		return self.r
 
+	def get_v(self):
+		return self.v
+
 	def plot(self,color):
 		plt.scatter(self.r[0],self.r[1], 1, color)
+
+	def plot_v(self, colori):
+		plt.quiver(self.r[0],self.r[1],self.v[0],self.v[1],angles='xy', scale_units='xy', scale=2,width=0.002,color=colori)
 
 	def checkpoint(self,xmin, xmax, ymin, ymax):
 		if self.r[0]>xmax or self.r[0]<xmin or self.r[1]>ymax or self.r[1]<ymin:
@@ -135,9 +142,12 @@ for i in range(0, int(len(MobileCharge)/6)):
 
 ## Plotting ##
 
-colors=["#00ff00","#ff0000","#0000ff","#f00f00","#0f00f0","#00f00f"]
+colors=["#00ff00","#3e8436","#0000ff","#f00f00","#0f00f0","#00f00f","#ff0000"]
 
 # Electric field lines and potential contours
+
+arrowstep=75
+maxnpoints=1000
 
 fig = plt.figure(figsize=(6, 4.5))
 potential.plot()
@@ -145,11 +155,12 @@ field.plot()
 
 for i in range(0, len(mobilecharge)):
 	n=0
-	while n<500:
+	while n<maxnpoints:
 		if mobilecharge[i].checkpoint(XMIN, XMAX, YMIN, YMAX):
 			break
 		else:
-			x_mc,y_mc=mobilecharge[i].get_r()
+			if n%arrowstep==0:
+				mobilecharge[i].plot_v(colors[i])
 			mobilecharge[i].plot(colors[i])
 			m=mobilecharge[i].move()
 			r=mobilecharge[i].get_r()
